@@ -16,18 +16,18 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
     
     open var pages = [Page]() {
         didSet {
-            pageController.numberOfPages = pageViewModels.count
+            pageController.numberOfPages = pages.count
             pageViewModels = pages.map({ return PageViewModel(page: $0)})
         }
     }
     
-    var rightButtonTitle = "" {
+    open var rightButtonTitle = "" {
         didSet {
             rightButton.setTitle(rightButtonTitle, for: .normal)
         }
     }
     
-    var leftButtonTitle = "" {
+    open var leftButtonTitle = "" {
         didSet {
             leftButton.setTitle(leftButtonTitle, for: .normal)
         }
