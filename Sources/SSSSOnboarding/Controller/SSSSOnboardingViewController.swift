@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SSSSOnboardingViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+public class SSSSOnboardingViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
     fileprivate let cellId = "cellId"
     
