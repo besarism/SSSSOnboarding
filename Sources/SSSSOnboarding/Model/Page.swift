@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Page {
+public struct Page {
     let image: String
     let header: String
     let description: String
