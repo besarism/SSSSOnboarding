@@ -12,7 +12,7 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
     
     fileprivate let cellId = "cellId"
     
-    open var pageViewModels = [PageViewModel]()
+    var pageViewModels = [PageViewModel]()
     
     open var pages = [Page]() {
         didSet {
