@@ -45,7 +45,7 @@ class SSSSOnboardingViewController: UIViewController, UICollectionViewDelegateFl
         button.backgroundColor = .clear
         button.setTitle("Close", for: .normal)
         button.setTitleColor(.gray, for: .normal)
-        button.titleLabel?.font = UIFont(name: "\(fontName)-bold", size: 15)//.boldSystemFont(ofSize: 15)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 15)
         button.addTarget(self, action: #selector(prevPage), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
