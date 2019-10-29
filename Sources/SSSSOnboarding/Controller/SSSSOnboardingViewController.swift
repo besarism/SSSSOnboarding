@@ -8,13 +8,13 @@
 
 import UIKit
 
-public class SSSSOnboardingViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+open class SSSSOnboardingViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
     fileprivate let cellId = "cellId"
     
-    var pageViewModels = [PageViewModel]()
+    open var pageViewModels = [PageViewModel]()
     
-    var pages = [Page]() {
+    open var pages = [Page]() {
         didSet {
             pageController.numberOfPages = pageViewModels.count
             pageViewModels = pages.map({ return PageViewModel(page: $0)})
@@ -131,14 +131,14 @@ public class SSSSOnboardingViewController: UIViewController, UICollectionViewDel
     
     
     
-    override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         //setupViews
         setupCollectionView()
         setupViews()
     }
     
-    fileprivate func setupCollectionView() {
+    open func setupCollectionView() {
         collectionView.backgroundColor = .white
         collectionView.register(PageCell.self, forCellWithReuseIdentifier: cellId)
         collectionView.isPagingEnabled = true
@@ -152,7 +152,7 @@ public class SSSSOnboardingViewController: UIViewController, UICollectionViewDel
     }
     
     
-    func setupViews() {
+    open func setupViews() {
         //upper buttons
         view.addSubview(rightButton)
         view.addSubview(leftButton)
@@ -191,7 +191,7 @@ public class SSSSOnboardingViewController: UIViewController, UICollectionViewDel
     }
     
     
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    open func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         
         //Accesses the instance referenced by this pointer -> pointee
         let x = targetContentOffset.pointee.x
@@ -201,27 +201,27 @@ public class SSSSOnboardingViewController: UIViewController, UICollectionViewDel
         print(x, view.frame.width, currentPage)
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return pageViewModels.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! PageCell
         let pageViewModel = pageViewModels[indexPath.item]
         cell.pageViewModel = pageViewModel
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.frame.width, height: view.frame.height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     
     //This function fixes the rotation bug
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         coordinator.animate(alongsideTransition: { (_) in
             self.collectionView.collectionViewLayout.invalidateLayout()
             if self.pageController.currentPage == 0 {
