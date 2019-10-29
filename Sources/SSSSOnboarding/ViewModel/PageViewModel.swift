@@ -11,6 +11,7 @@ struct PageViewModel {
     let image: UIImage
     let attributedText: NSAttributedString
     
+    //Dependency Injection
     init(page: Page) {
         self.image = UIImage(named: page.image) ?? UIImage()
         

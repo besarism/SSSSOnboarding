@@ -32,12 +32,12 @@ class SSSSOnboardingViewController: UIViewController, UICollectionViewDelegateFl
             leftButton.setTitle(leftButtonTitle, for: .normal)
         }
     }
-    
-    var fontName = "" {
-        didSet {
-            
-        }
-    }
+    //FIXME: on font change update views
+//    var fontName = "" {
+//        didSet {
+//
+//        }
+//    }
 
     
     private lazy var rightButton: UIButton =  {
