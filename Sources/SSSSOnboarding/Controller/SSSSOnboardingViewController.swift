@@ -17,7 +17,7 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
     open var pages = [Page]() {
         didSet {
             pageController.numberOfPages = pages.count
-            pageViewModels = pages.map({ return PageViewModel(page: $0)})
+            pageViewModels = pages.map({ return PageViewModel(page: $0, textColor: themeColor, fontName: fontName)})
         }
     }
     
@@ -32,15 +32,32 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
             leftButton.setTitle(leftButtonTitle, for: .normal)
         }
     }
-    //FIXME: on font change update views
-//    var fontName = "" {
-//        didSet {
-//
-//        }
-//    }
-
     
-    private lazy var rightButton: UIButton =  {
+    open var prevButtonTitle = "" {
+        didSet {
+            prevButton.setTitle(prevButtonTitle, for: .normal)
+        }
+    }
+    
+    open var nextButtonTitle = "" {
+        didSet {
+            nextButton.setTitle(nextButtonTitle, for: .normal)
+        }
+    }
+    
+    open var themeColor = UIColor.black {
+        didSet {
+            handle(themeColor: themeColor)
+        }
+    }
+    
+    open var fontName = "HelveticaNeue" {
+        didSet {
+            handle(fontName: fontName)
+        }
+    }
+    
+    lazy var rightButton: UIButton =  {
         let button = UIButton(type: .system)
         button.backgroundColor = .clear
         button.setTitle("Close", for: .normal)
@@ -52,7 +69,7 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         return button
     }()
     
-    private var leftButton: UIButton =  {
+    var leftButton: UIButton =  {
            let button = UIButton(type: .system)
            button.backgroundColor = .clear
            button.setTitle("Later", for: .normal)
@@ -77,7 +94,7 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
     }()
     
     //Bottom Stack View
-    private var prevButton: UIButton =  {
+    var prevButton: UIButton =  {
         let button = UIButton(type: .system)
         button.backgroundColor = .clear
         button.setTitle("PREV", for: .normal)
@@ -90,7 +107,7 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         return button
     }()
     
-    private var nextButton: UIButton =  {
+    var nextButton: UIButton =  {
         let button = UIButton(type: .system)
         button.backgroundColor = .clear
         button.setTitle("NEXT", for: .normal)
@@ -116,8 +133,7 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
     }
     
-    
-    private var pageController: UIPageControl = {
+    var pageController: UIPageControl = {
         let pc = UIPageControl()
         pc.currentPage = 0
         pc.currentPageIndicatorTintColor = .green
@@ -126,10 +142,6 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         
         return pc
     }()
-    
-    
-    
-    
     
     override open func viewDidLoad() {
         super.viewDidLoad()
@@ -151,7 +163,6 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         ])
     }
     
-    
     open func setupViews() {
         //upper buttons
         view.addSubview(rightButton)
@@ -159,18 +170,18 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         
         //closeButton
         NSLayoutConstraint.activate([
-            rightButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 44),
-            rightButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            rightButton.widthAnchor.constraint(equalToConstant: 56),
-            rightButton.heightAnchor.constraint(equalToConstant: 48)
+            leftButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 44),
+            leftButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            leftButton.widthAnchor.constraint(equalToConstant: 56),
+            leftButton.heightAnchor.constraint(equalToConstant: 48)
         ])
         
         //laterButton
         NSLayoutConstraint.activate([
-            leftButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 44),
-            leftButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-            leftButton.widthAnchor.constraint(equalToConstant: 56),
-            leftButton.heightAnchor.constraint(equalToConstant: 48)
+            rightButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 44),
+            rightButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            rightButton.widthAnchor.constraint(equalToConstant: 56),
+            rightButton.heightAnchor.constraint(equalToConstant: 48)
         ])
         
         
@@ -189,7 +200,6 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
             bottomStackView.heightAnchor.constraint(equalToConstant: 50)
             ])
     }
-    
     
     open func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         
@@ -236,7 +246,4 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
             
         }
     }
-    
-    
 }
-
