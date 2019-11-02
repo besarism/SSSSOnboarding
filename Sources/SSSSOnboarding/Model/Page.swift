@@ -18,6 +18,3 @@ public struct Page {
         self.description = description
     }
 }
-
-
-

@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Besar Ismaili on 29/10/2019.
 //
@@ -8,12 +8,12 @@
 
 import UIKit
 
-open class SSSSOnboardingViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+open class SSSSOnboardingViewController: UIViewController {
     
-    fileprivate let cellId = "cellId"
+    let cellId = "cellId"
     
     var pageViewModels = [PageViewModel]()
-    
+        
     open var pages = [Page]() {
         didSet {
             pageController.numberOfPages = pages.count
@@ -33,6 +33,26 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         }
     }
     
+    open var actionButtonTitle = "" {
+        didSet {
+            actionButton.setTitle(actionButtonTitle, for: .normal)
+        }
+    }
+    
+    open var isRightButtonHidden = false {
+        didSet {
+            rightButton.isHidden = isRightButtonHidden
+        }
+    }
+    
+    open var isLeftButtonHidden = false {
+        didSet {
+            leftButton.isHidden = isLeftButtonHidden
+        }
+    }
+    
+    open var isActionButtonHidden = false
+    
     open var prevButtonTitle = "" {
         didSet {
             prevButton.setTitle(prevButtonTitle, for: .normal)
@@ -48,12 +68,14 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
     open var themeColor = UIColor.black {
         didSet {
             handle(themeColor: themeColor)
+            pageViewModels = pages.map({ return PageViewModel(page: $0, textColor: themeColor, fontName: fontName)})
         }
     }
     
     open var fontName = "HelveticaNeue" {
         didSet {
             handle(fontName: fontName)
+            pageViewModels = pages.map({ return PageViewModel(page: $0, textColor: themeColor, fontName: fontName)})
         }
     }
     
@@ -62,24 +84,24 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         button.backgroundColor = .clear
         button.setTitle("Close", for: .normal)
         button.setTitleColor(.gray, for: .normal)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 15)
-        button.addTarget(self, action: #selector(prevPage), for: .touchUpInside)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 18)
+        button.addTarget(self, action: #selector(handleRightButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
     var leftButton: UIButton =  {
-           let button = UIButton(type: .system)
-           button.backgroundColor = .clear
-           button.setTitle("Later", for: .normal)
-           button.setTitleColor(.gray, for: .normal)
-           button.titleLabel?.font = .boldSystemFont(ofSize: 15)
-           button.addTarget(self, action: #selector(prevPage), for: .touchUpInside)
-           button.translatesAutoresizingMaskIntoConstraints = false
-           
-           return button
-       }()
+        let button = UIButton(type: .system)
+        button.backgroundColor = .clear
+        button.setTitle("Later", for: .normal)
+        button.setTitleColor(.gray, for: .normal)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 18)
+        button.addTarget(self, action: #selector(handleLeftButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
     
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -89,8 +111,23 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         cv.delegate = self
         cv.dataSource = self
         cv.translatesAutoresizingMaskIntoConstraints = false
+        cv.showsHorizontalScrollIndicator = false
         
         return cv
+    }()
+    
+    var actionButton: UIButton =  {
+        let button = UIButton(type: .system)
+        button.backgroundColor = .black
+        button.setTitle("Dismiss", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 18)
+        button.addTarget(self, action: #selector(handleActionButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 5
+        button.isHidden = true
+        
+        return button
     }()
     
     //Bottom Stack View
@@ -99,7 +136,7 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         button.backgroundColor = .clear
         button.setTitle("PREV", for: .normal)
         button.setTitleColor(.gray, for: .normal)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 15)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 18)
         button.addTarget(self, action: #selector(prevPage), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.alpha = 0
@@ -112,27 +149,15 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         button.backgroundColor = .clear
         button.setTitle("NEXT", for: .normal)
         button.setTitleColor(.green, for: .normal)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 15)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 18)
         button.addTarget(self, action: #selector(nextPage), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
-    @objc private func nextPage() {
-        let index = min(pageController.currentPage + 1, pageViewModels.count - 1)
-        let indexPath = IndexPath(item: index, section: 0)
-        pageController.currentPage = index
-        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-    }
-    
-    @objc private func prevPage() {
-        let index = max(pageController.currentPage - 1, 0)
-        let indexPath = IndexPath(item: index, section: 0)
-        pageController.currentPage = index
-        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-    }
-    
+    var bottomStackView = UIStackView()
+        
     var pageController: UIPageControl = {
         let pc = UIPageControl()
         pc.currentPage = 0
@@ -150,100 +175,25 @@ open class SSSSOnboardingViewController: UIViewController, UICollectionViewDeleg
         setupViews()
     }
     
-    open func setupCollectionView() {
-        collectionView.backgroundColor = .white
-        collectionView.register(PageCell.self, forCellWithReuseIdentifier: cellId)
-        collectionView.isPagingEnabled = true
-        view.addSubview(collectionView)
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+    //MARK: - Bottom button methods
+    @objc private func nextPage() {
+        let index = min(pageController.currentPage + 1, pageViewModels.count - 1)
+        let indexPath = IndexPath(item: index, section: 0)
+        pageController.currentPage = index
+        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        handleButtonHidding(currentPage: index)
     }
     
-    open func setupViews() {
-        //upper buttons
-        view.addSubview(rightButton)
-        view.addSubview(leftButton)
-        
-        //closeButton
-        NSLayoutConstraint.activate([
-            leftButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 44),
-            leftButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            leftButton.widthAnchor.constraint(equalToConstant: 56),
-            leftButton.heightAnchor.constraint(equalToConstant: 48)
-        ])
-        
-        //laterButton
-        NSLayoutConstraint.activate([
-            rightButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 44),
-            rightButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-            rightButton.widthAnchor.constraint(equalToConstant: 56),
-            rightButton.heightAnchor.constraint(equalToConstant: 48)
-        ])
-        
-        
-        //bottomStackView
-        let bottomStackView = UIStackView(arrangedSubviews: [prevButton, pageController, nextButton])
-        bottomStackView.distribution = .fillEqually
-        bottomStackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(bottomStackView)
-        
-        //Auto-layout for the bottomStackView
-        //Another way of activating the constraints, NSLayoutConstraint.activate([]) == .isActive = true
-        NSLayoutConstraint.activate([
-            bottomStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            bottomStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            bottomStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            bottomStackView.heightAnchor.constraint(equalToConstant: 50)
-            ])
+    @objc private func prevPage() {
+        let index = max(pageController.currentPage - 1, 0)
+        let indexPath = IndexPath(item: index, section: 0)
+        pageController.currentPage = index
+        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        handleButtonHidding(currentPage: index)
     }
     
-    open func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        
-        //Accesses the instance referenced by this pointer -> pointee
-        let x = targetContentOffset.pointee.x
-        let currentPage = Int(x / view.frame.width)
-        pageController.currentPage = currentPage
-        //checkout what it prints:
-        print(x, view.frame.width, currentPage)
-    }
-    
-    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return pageViewModels.count
-    }
-    
-    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! PageCell
-        let pageViewModel = pageViewModels[indexPath.item]
-        cell.pageViewModel = pageViewModel
-        return cell
-    }
-    
-    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: view.frame.height)
-    }
-    
-    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-    
-    //This function fixes the rotation bug
-    override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        coordinator.animate(alongsideTransition: { (_) in
-            self.collectionView.collectionViewLayout.invalidateLayout()
-            if self.pageController.currentPage == 0 {
-                self.collectionView.contentOffset = .zero
-            }
-            else {
-                let indexPath = IndexPath(item: self.pageController.currentPage, section: 0)
-                self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            }
-            
-        }) { (_) in
-            
-        }
-    }
+    @objc open func handleLeftButton() { }
+    @objc open func handleRightButton() { }
+    @objc open func handleActionButton() { }
+
 }
