@@ -90,3 +90,9 @@ class ViewController: SSSSOnboardingViewController {
 ### Landscape
 
 ![SSSSOnboarding Landscape](https://media.giphy.com/media/YMjDuNVgjVJBamGolQ/giphy.gif)
+
+## Authors
+
+* **Besar Ismaili** - *Initial work* - [@besarism](https://github.com/besarism)
+
+See also the list of [contributors](https://github.com/besarism/SSSSOnboarding/graphs/contributors) who participated in this project.
