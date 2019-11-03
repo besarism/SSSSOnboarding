@@ -1,5 +1,7 @@
 # SSSSOnboarding
 
+A lightweight and simple swifty secure solution for <b>onboarding</b> which supports both <b>Portrait and Landscape</b>
+
 
 ## Requirements
 - iOS 11.0+
@@ -18,7 +20,10 @@ dependencies: [
     .package(url: "https://github.com/besarism/SSSSOnboarding.git", from: "0.0.2")
 ]
 ```
-Or if you go `File > Swift Packages > Add Package Dependency`.
+Or if you go `File > Swift Packages > Add Package Dependency`, and add the link:
+```swift
+https://github.com/besarism/SSSSOnboarding.git
+```
 
 
 ## Usage
@@ -32,9 +37,9 @@ class ViewController: SSSSOnboardingViewController {
         super.viewDidLoad()
 
         pages = [
-            Page(image: "image_1", header: "iPhone", description: "The iPhone is a line of smartphones designed and marketed by Apple Inc."),
-            Page(image: "image_2", header: "Versus", description: "Versus, often abbreviated v., v, vs., vs, or vrs. is a Latin word meaning 'against'."),
-            Page(image: "image_3", header: "Android phone", description: "Android phone is a smartphone that runs the Android operating system.")
+            Page(image: "iphone", header: "iPhone", description: "The iPhone is a line of smartphones designed and marketed by Apple Inc."),
+            Page(image: "versus", header: "Versus", description: "Versus, often abbreviated v., v, vs., vs, or vrs. is a Latin word meaning 'against'."),
+            Page(image: "android_phone", header: "Android phone", description: "Android phone is a smartphone that runs the Android operating system.")
         ]        
     }
 
@@ -49,9 +54,9 @@ class ViewController: SSSSOnboardingViewController {
         super.viewDidLoad()
 
         pages = [
-            Page(image: "image_1", header: "iPhone", description: "The iPhone is a line of smartphones designed and marketed by Apple Inc."),
-            Page(image: "image_2", header: "Versus", description: "Versus, often abbreviated v., v, vs., vs, or vrs. is a Latin word meaning 'against'."),
-            Page(image: "image_3", header: "Android phone", description: "Android phone is a smartphone that runs the Android operating system.")
+            Page(image: "iphone", header: "iPhone", description: "The iPhone is a line of smartphones designed and marketed by Apple Inc."),
+            Page(image: "versus", header: "Versus", description: "Versus, often abbreviated v., v, vs., vs, or vrs. is a Latin word meaning 'against'."),
+            Page(image: "android_phone", header: "Android phone", description: "Android phone is a smartphone that runs the Android operating system.")
         ]
 
         //customization
@@ -63,6 +68,14 @@ class ViewController: SSSSOnboardingViewController {
         prevButtonTitle = "PREV"
         isActionButtonHidden = false
         actionButtonTitle = "Start the test"        
+    }
+
+    override func handleRightButton() {
+        //do something
+    }
+
+    override func handleActionButton() {
+        //do something
     }
 
 }
